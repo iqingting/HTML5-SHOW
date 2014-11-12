@@ -1,17 +1,16 @@
 /**
  * HTML5消息通知
- * Author: rguanghui.stupid@gmail.com, rguanghui.sinaapp.com
- * Update: 2014.08.12
+ * Author: rguanghui.stupid@gmail.com, https://github.com/rguanghui/
+ * Update: 2014.11.12
  * 添加对webkit前缀的支持
  * @param configs {Object}
- * configs.elem  {String|Object} 主动触发抑或被动触发，有值得话会对elem元素添加click事件以触发消息通知，没有值则在调用的时候触发消息通知
  * configs.title {String}        消息通知的标题
  * configs.body  {String}        消息通知的内容
  * configs.icon  {String}        消息通知的展示图片
  * configs.tag   {String}        标签，使用一致的tag不会让消息通知一层层的累加而是替换之前tag一样的消息通知
  * congis.show   {Function}      消息通知展示时的函数，默认不做什么响应
- * configs.click {Function}      点击弹出的消息通知后执行的函数，默认聚焦在当前视口
- * configs.close {Function}      关闭消息通知后执行的函数      
+ * configs.click {Function}      点击弹出的消息通知后执行的函数
+ * configs.close {Function}      关闭消息通知后执行的函数
  */
 (function(win, doc, undefined) {
 
