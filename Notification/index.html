@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="utf-8">
+  <title>HTML5 Notification Show</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="format-detection" content="telephone=no">
+  <meta content="telephone=no" name="format-detection">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" type="text/css" href="http://rguanghui.sinaapp.com/lib/css/common.css">
+  <style type="text/css">
+    .mg1 {
+      margin: 1em;
+    }
+  </style>
+</head>
+<body>
+  
+  <p class="mg1">
+    <button id="notifyBtn1" class="btn btn-blue">简单的消息通知</button>
+  </p>
+
+  <p class="mg1">
+    <button id="notifyBtn2" class="btn btn-blue">消息通知参数展示</button>
+  </p>
+
+  <script src="http://requirejs.org/docs/release/2.1.15/comments/require.js"></script>
+  <script type="text/javascript">
+    
+    var notifyBtn1 = document.getElementById('notifyBtn1'),
+        notifyBtn2 = document.getElementById('notifyBtn2');
+
+    notifyBtn1.addEventListener('click', showNotify1, false);
+    notifyBtn2.addEventListener('click', showNotify2, false);
+
+
+    function showNotify1() {
+      var data = {
+        title: '下机提醒',
+        body: '您的余额不足，请充值',
+        nosupport: function() { alert('fuck ie, don\'t ask me why use this alert!') }
+      };
+
+      require(['notification'], function(notify) {
+        var d = notify(data);
+      });
+    }
+    
+    function showNotify2() {
+      var data = {
+        title: '下机再次提醒',
+        body: '您的余额不足，请再次充值',
+        show: function() {
+          console.log('the notification is showing');
+        },
+        click: function() {
+          window.open('http://www.baidu.com/');
+        },
+        close: function() {
+          console.log('you close this notification');
+        },
+        nosupport: function() { alert('fuck ie, don\'t ask me why use this alert!') }
+      };
+
+      require(['notification'], function(notify) {
+        var d = notify(data);
+      });
+    }
+    
+  </script>
+</body>
+</html>
