@@ -40,12 +40,12 @@
     function showNotify1() {
       var data = {
         title: '下机提醒',
-        body: '您的余额不足，请充值',
-        nosupport: function() { alert('fuck ie, don\'t ask me why use this alert!') }
+        body: '您的余额不足，请充值'
       };
 
       require(['notification'], function(notify) {
         var d = notify(data);
+        console.log(d.isSupport());
       });
     }
     

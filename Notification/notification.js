@@ -39,7 +39,7 @@
     
     if (this.notification === undefined) {
       configs.nosupport && configs.nosupport();
-      return false;
+      return this;
     }
 
     configs = configs || {};
@@ -49,11 +49,13 @@
     for(var i in defaults) defaults.hasOwnProperty(i) && !configs.hasOwnProperty(i) && (configs[i] = defaults[i]);
     this.configs = configs;
     this.create();
+
+    return this;
   };
 
   // 是否支持桌面通知
-  deskNotification.prototype.support = function() {
-    return this.notification;
+  deskNotification.prototype.isSupport = function() {
+    return this.notification !== undefined;
   };
 
   // 实验性质与完全支持
@@ -116,6 +118,7 @@
 
   var entry = function() {
     return notify.init.apply(notify, arguments);
+    // return notify;
   };
   
   if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -123,7 +126,7 @@
       module.exports = entry;
     });
   } else {
-    win.notify = entry;
+    win.notify = entry;  
   }
 
 })(window, document);
