@@ -42,7 +42,6 @@
     end    : 'mouseup',
     cancel : 'mouseout'
   }
-  // var start = 'mousedown', move = 'mousemove', end = 'mouseup', cancel = 'mouseout';
   doc.createTouch && (_e.start = 'touchstart', _e.move = 'touchmove', _e.end = 'touchend', _e.cancel = 'touchcancel');
 
   function scratch(config) {
@@ -195,7 +194,7 @@
 
   // 清空画布并移除canvas
   scratch.prototype.clear = function() {
-    document.body.removeChild(canvas);
+    doc.body.removeChild(canvas);
   };
 
   var stch = new scratch();
