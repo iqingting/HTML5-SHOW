@@ -16,8 +16,9 @@
 <body>
   <img id="test" src="http://renguanghui.qiniudn.com/qq-app-1.jpg">
   <p id="area"></p>
-  <script src="scratch.js"></script>
+  <script src="file:///E:/Github/Whole/scratch.js"></script>
   <script type="text/javascript">
+
     var scratchTest = scratch({
       elem: 'test',
       condition: 10,
@@ -30,10 +31,10 @@
       },
       callback: function() {
         alert('刮卡结束，触发回调函数！');
-        // this.clear();
+        this.clear();
       }
     });
-    scratchTest.enable();
+    
   </script>
   
 </body>

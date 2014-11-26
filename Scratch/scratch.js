@@ -46,6 +46,9 @@
   doc.createTouch && (_e.start = 'touchstart', _e.move = 'touchmove', _e.end = 'touchend', _e.cancel = 'touchcancel');
 
   function scratch(config) {
+
+    config = config || {};
+
     var defaults = {
       elem      : null,
       condition : 80,
@@ -53,9 +56,12 @@
       clear     : false,
       down      : null,
       move      : null,
-      enable    : true,
       callback  : null
     };
+
+    for (var i in defaults) {
+      defaults.hasOwnProperty(i) && !config.hasOwnProperty(i) && (config[i] = defaults[i]);
+    }
 
     var elem = config.elem;
 
@@ -71,9 +77,7 @@
     config.elem = elem;
 
 
-    for (var i in defaults) {
-      defaults.hasOwnProperty(i) && !config.hasOwnProperty(i) && (config[i] = defaults[i]);
-    }
+    
     
     this.config = config;
     _this = this;
@@ -88,7 +92,7 @@
     offLeft = elem.offsetLeft;
     offTop = elem.offsetTop;
 
-    _this.config.enable = true;
+    _this.enable = true;
     _this.createCanvas();
 
   };
@@ -128,7 +132,7 @@
   };
 
   scratch.prototype.fnStart = function(e) {
-    if (!_this.config.enable) return;
+    if (!_this.enable) return;
 
     e.preventDefault();
     e.changedTouches && (e = e.changedTouches[e.changedTouches.length-1]);
@@ -197,12 +201,8 @@
 
   // 清空画布并移除canvas
   scratch.prototype.clear = function() {
-    this.config.enable = false;
-    document.body.removeChild(canvas);
-  };
-
-  scratch.prototype.enable = function() {
     this.enable = false;
+    document.body.removeChild(canvas);
   };
 
   win.scratch = function(config) {
