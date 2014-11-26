@@ -75,9 +75,6 @@
     }
 
     config.elem = elem;
-
-
-    
     
     this.config = config;
     _this = this;
@@ -92,7 +89,6 @@
     offLeft = elem.offsetLeft;
     offTop = elem.offsetTop;
 
-    _this.enable = true;
     _this.createCanvas();
 
   };
@@ -132,7 +128,6 @@
   };
 
   scratch.prototype.fnStart = function(e) {
-    if (!_this.enable) return;
 
     e.preventDefault();
     e.changedTouches && (e = e.changedTouches[e.changedTouches.length-1]);
@@ -172,7 +167,6 @@
   scratch.prototype.fnEnd = function( e ) {
     if (!down) return;
     down = false;
-    return this;
   };
   
   scratch.prototype.check = function() {
@@ -201,12 +195,21 @@
 
   // 清空画布并移除canvas
   scratch.prototype.clear = function() {
-    this.enable = false;
     document.body.removeChild(canvas);
   };
 
-  win.scratch = function(config) {
-    return new scratch(config);
-  };
+  var stch = new scratch();
+
+  var entry = function() {
+    return stch.applay(stch, arguments);
+  }
+
+  if (typeof define === 'function' && (define.amd || define.cmd)) {
+    define(function(require, exports, module) {
+      module.exports = entry;
+    });
+  } else {
+    win.scratch = entry;  
+  }
 
 })(window, document);
