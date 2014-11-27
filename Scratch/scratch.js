@@ -10,31 +10,6 @@
 
   'user strict';
 
-  // 一些变量
-  var canvas = document.createElement('canvas'),
-      cxt;
-
-  // 是否支持 canvas 的判断
-  try {
-    cxt = canvas.getContext('2d');
-  } catch(e) {
-    console.log('浏览器不支持canvas，程序无法向下进行...请更换IE9+浏览器');
-    win.scratch = function(){};
-    return;
-  }
-
-  var width = 0,
-      height = 0,
-      x = 0,
-      y = 0,
-      offLeft = 0,
-      offTop = 0,
-      lineWidth = 30,
-      down = false,
-      _this = null;
-
-  canvas.crossOrigin = "*"; // 跨域
-
   // mouse和touch事件使用判断
   var _e = {
     start  : 'mousedown',
@@ -44,19 +19,37 @@
   }
   doc.createTouch && (_e.start = 'touchstart', _e.move = 'touchmove', _e.end = 'touchend', _e.cancel = 'touchcancel');
 
-  function scratch(config) {
+  var scratch = function() {};
 
-    config = config || {};
+  scratch.prototype.init = function(config) {
 
-    var defaults = {
+    this.defaults = {
       elem      : null,
       condition : 80,
+      lineWidth : 30,
       bg        : '#eee',
       clear     : false,
       down      : null,
       move      : null,
       callback  : null
     };
+
+    // 一些变量
+    this.canvas = document.createElement('canvas');
+    this.canvas.crossOrigin = "*"; // 跨域
+
+    // 是否支持 canvas 的判断
+    try {
+      this.cxt = this.canvas.getContext('2d');
+    } catch(e) {
+      console.log('浏览器不支持canvas，程序无法向下进行...请更换IE9+浏览器');
+      win.scratch = function(){};
+      return;
+    }
+
+    config = config || {};
+
+    var defaults = this.defaults;
 
     for (var i in defaults) {
       defaults.hasOwnProperty(i) && !config.hasOwnProperty(i) && (config[i] = defaults[i]);
@@ -66,44 +59,62 @@
 
     typeof elem === 'string' && (elem = document.getElementById(elem));
 
-    if (!elem) {
-      console.error('必须传入需要触发的图片或者包含图片的DOM');
-      return;
-    } else if (elem.nodeName.toLowerCase() !== 'img') {
-      elem = elem.querySelector('img');
-    }
-
     config.elem = elem;
     
     this.config = config;
-    _this = this;
-    config.elem.addEventListener('load', this.init, false);
+
+    this.isImage = (elem.nodeName.toLowerCase() === 'img');
+
+
+    var _this = this;
+
+    if (!elem) {
+      console.error('必须传入需要触发的DOM');
+      return;
+    } else if (this.isImage) {
+
+      var imgOjbect = new Image();
+      imgOjbect.src = elem.src;
+      imgOjbect.addEventListener('load', function() {
+        _this.createCanvas.call(_this);
+      }, false);
+
+    } else {
+      this.createCanvas();
+    }
+
   };
 
-  scratch.prototype.init = function() {
-    var elem = _this.config.elem;
-
-    width = elem.width;
-    height = elem.height;
-    offLeft = elem.offsetLeft;
-    offTop = elem.offsetTop;
-
-    _this.createCanvas();
-
-  };
-  
   scratch.prototype.createCanvas = function() {
 
-    // 将canvas放置在图片上
+    var elem = this.config.elem,
+        canvas = this.canvas,
+        cxt = this.cxt;
+
+    var width = elem.offsetWidth,
+        height = elem.offsetHeight,
+        offLeft = elem.offsetLeft,
+        offTop = elem.offsetTop;
+
+    this.width = width;
+    this.height = height;
+    this.offLeft = offLeft;
+    this.offTop = offTop;
+
+    // 将canvas覆盖在DOM上
     canvas.style.cssText = 'position: absolute; left: ' + offLeft + 'px' + '; top: ' + offTop + 'px';
     canvas.width = width;
     canvas.height = height;
 
     cxt.fillRect(0, 0, width, height);
 
-    if (this.config.bg.charAt(0) === '#') {
 
-      cxt.fillStyle = _this.config.bg;
+    // 背景可以是单纯颜色也可以是图片
+    var bg = this.config.bg;
+
+    if (bg.charAt(0) === '#') {
+
+      cxt.fillStyle = bg;
       cxt.beginPath();
       cxt.fillRect(0, 0, width, height); // 灰度
       cxt.fill();
@@ -111,104 +122,117 @@
 
     } else {
 
-      var bg = new Image();
-      bg.crossOrigin = '*';
-      bg.src = this.config.bg;
-      bg.onload = function() {
+      var bgObeject = new Image();
+      bgObeject.crossOrigin = '*';
+      bgObeject.src = bg;
+      bgObeject.onload = function() {
         cxt.drawImage(this, 0, 0, width, height);
       };
     }
 
     doc.body.appendChild(canvas);
-    canvas.addEventListener(_e.start, this.fnStart, false);
-    canvas.addEventListener(_e.move, this.fnMove, false);
-    canvas.addEventListener(_e.end, this.fnEnd, false);
-    canvas.addEventListener(_e.cancel, this.fnEnd, false);
+
+    var _this = this;
+
+    this.on(_e.start, this.fnStart);
+    this.on(_e.move, this.fnMove);
+    this.on(_e.end, this.fnEnd);
+    this.on(_e.cancel, this.fnEnd);
+  };
+
+  scratch.prototype.on = function(type, fn) {
+    var _this = this;
+    this.canvas.addEventListener(type, function(e) {
+      e.preventDefault();
+      e.changedTouches && (e = e.changedTouches[e.changedTouches.length-1]);
+      fn.call(_this, e);
+    }, false);
   };
 
   scratch.prototype.fnStart = function(e) {
+    this.down = true;
 
-    e.preventDefault();
-    e.changedTouches && (e = e.changedTouches[e.changedTouches.length-1]);
+    var canvas = this.canvas,
+        cxt = this.cxt,
+        config = this.config;
 
-    down = true;
+    this.x = e.pageX - this.offLeft;
+    this.y = e.pageY - this.offTop;
 
-    x = e.pageX - canvas.offsetLeft;
-    y = e.pageY - canvas.offsetTop;
-
+    // 绘制圆
     cxt.globalCompositeOperation = 'destination-out';
     cxt.strokeStyle = '#fff';
     cxt.lineJoin = 'round';
-    cxt.lineWidth = lineWidth;
+    cxt.lineWidth = config.lineWidth;
     cxt.beginPath();
-    cxt.arc(x, y, lineWidth/2, 0, Math.PI*2, true);
+    cxt.arc(this.x, this.y, config.lineWidth/2, 0, Math.PI*2, true);
     cxt.closePath();
     cxt.fill();
 
-    _this.config.down && _this.config.down();
+    config.down && config.down();
   };
   
-  scratch.prototype.fnMove = function( e ) {
-    if (!down) return;
+  scratch.prototype.fnMove = function(e) {
+    if (!this.down) return;
 
-    e.changedTouches && (e = e.changedTouches[e.changedTouches.length-1]);
+    var cxt = this.cxt;
 
-    cxt.moveTo(x, y);
-    x = e.pageX - offLeft;
-    y = e.pageY - offTop;
-    cxt.lineTo(x, y);
+    cxt.moveTo(this.x, this.y);
+    this.x = e.pageX - this.offLeft;
+    this.y = e.pageY - this.offTop;
+    cxt.lineTo(this.x, this.y);
     cxt.closePath();
     cxt.stroke();
 
-    _this.check();
+    this.check();
   };
   
-  scratch.prototype.fnEnd = function( e ) {
-    if (!down) return;
-    down = false;
+  scratch.prototype.fnEnd = function(e) {
+    this.down = false;
   };
   
   scratch.prototype.check = function() {
     
-    var data = cxt.getImageData(0, 0, width, height).data;
-    var i = 0, j = 0, len = data.length - 3;
-    var config = this.config;
+    var data = this.cxt.getImageData(0, 0, this.width, this.height).data,
+        i = 0, j = 0, len = data.length - 3,
+        config = this.config;
 
     for(; i < len; i += 4) {
       if (data[i]===0 && data[i+1]===0 && data[i+2]===0 && data[i+3]===0) {
         j++;
       }
-    };
+    }
 
-    var touchArea = (j*100/(width*height)).toFixed(2);
+    var touchArea = (j*100/(this.width*this.height)).toFixed(2);
 
-    this.config.move && this.config.move(touchArea);
+    config.move && config.move(touchArea);
 
      // 刮出的范围大于设定的百分比时清空画布并执行回调参数
-    if (touchArea >= this.config.condition) {
+    if (touchArea >= config.condition) {
       config.clear && this.clear();
       config.callback && config.callback.call(this);
-    };
+    }
 
   };
 
   // 清空画布并移除canvas
   scratch.prototype.clear = function() {
-    doc.body.removeChild(canvas);
+    doc.body.removeChild(this.canvas);
   };
 
-  var stch = new scratch();
+  
 
   var entry = function() {
-    return stch.applay(stch, arguments);
-  }
+    var stch = new scratch();
+    return stch.init.apply(stch, arguments);
+  };
 
   if (typeof define === 'function' && (define.amd || define.cmd)) {
     define(function(require, exports, module) {
       module.exports = entry;
-    });
+    })
   } else {
-    win.scratch = entry;  
+    win.scratch = entry;
   }
 
 })(window, document);

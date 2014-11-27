@@ -16,14 +16,14 @@
 
   'use strict';
 
-  var deskNotification = function(configs) {
+  var deskNotification = function() {
     
     this.defaults = {
-      title: "html5 notification",
-      body: "",
-      icon: "http://renguanghui.qiniudn.com/gongqijun-qingting.jpg",
-      tag: "1",
-      dir: "ltr",
+      title: 'html5 notification',
+      body: '',
+      icon: 'http://renguanghui.qiniudn.com/gongqijun-qingting.jpg',
+      tag: '1',
+      dir: 'ltr',
       show: null,
       click: null,
       close: null,
@@ -59,11 +59,11 @@
   };
 
   // 实验性质与完全支持
-  deskNotification.prototype.isNew = "Notification" in window;
+  deskNotification.prototype.isNew = 'Notification' in window;
 
   // 是否已经允许
   deskNotification.prototype.isPermission = function() {
-    return this.isNew ? Notification.permission === "granted" : webkitNotification.checkPermission === 0;
+    return this.isNew ? Notification.permission === 'granted' : webkitNotification.checkPermission === 0;
   };
 
   // 请求允许桌面通知
@@ -73,7 +73,7 @@
   };
 
   // 创建桌面通知
-  deskNotification.prototype.create = function () {
+  deskNotification.prototype.create = function() {
 
     var configs = this.configs,
         notification = this.notification;
@@ -118,7 +118,6 @@
 
   var entry = function() {
     return notify.init.apply(notify, arguments);
-    // return notify;
   };
   
   if (typeof define === 'function' && (define.amd || define.cmd)) {

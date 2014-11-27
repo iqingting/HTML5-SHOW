@@ -12,22 +12,36 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="renderer" content="webkit">
   <link rel="stylesheet" type="text/css" href="http://rguanghui.sinaapp.com/lib/css/common.css">
+  <style type="text/css">
+    #test2 {
+      width: 300px;
+      height: 60px;
+    }
+  </style>
 </head>
 <body>
-  <img id="test" src="http://renguanghui.qiniudn.com/qq-app-1.jpg">
-  <p id="area"></p>
-  <script src="file:///E:/Github/Whole/scratch.js"></script>
+  
+  <img id="test" width="480" height="800" src="http://renguanghui.qiniudn.com/qq-app-1.jpg">
+
+  <div id="test2">凯迪拉克一辆</div>
+
+  <p id="area1"></p>
+  <p id="area2"></p>
+
+  <script type="text/javascript" src="scratch.js"></script>
+
+
   <script type="text/javascript">
 
     var scratchTest = scratch({
       elem: 'test',
-      condition: 10,
-      bg: 'http://renguanghui.qiniudn.com/imagescustom.jpg',
+      condition: 40,
+      bg: '#ccc',
       down: function() {
         console.log('down');
       },
       move: function(area) {
-        document.getElementById("area").innerHTML = '已刮开面积：' + area + '%';
+        document.getElementById('area1').innerHTML = '已刮开面积：' + area + '%';
       },
       callback: function() {
         alert('刮卡结束，触发回调函数！');
@@ -35,6 +49,23 @@
       }
     });
     
+    var scratchTest2 = scratch({
+      elem: 'test2',
+      condition: 40,
+      lineWidth: 2,
+      bg: '#eee',
+      down: function() {
+        console.log('down');
+      },
+      move: function(area) {
+        document.getElementById('area2').innerHTML = '已刮开面积：' + area + '%';
+      },
+      callback: function() {
+        alert('刮卡结束，触发回调函数！');
+        this.clear();
+      }
+    });
+      
   </script>
   
 </body>
