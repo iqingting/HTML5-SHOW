@@ -22,11 +22,8 @@
       title: 'html5 notification',
       body: '',
       icon: 'http://renguanghui.qiniudn.com/gongqijun-qingting.jpg',
-      tag: '1',
       dir: 'ltr',
-      show: null,
       click: null,
-      close: null,
       error: this.error,
       nosupport: null
     };
@@ -36,20 +33,20 @@
   };  
   
   deskNotification.prototype.init = function(configs) {
-    
+
+    configs = configs || {};
+
     if (this.notification === undefined) {
       configs.nosupport && configs.nosupport();
       return this;
     }
 
-    configs = configs || {};
     var defaults = this.defaults;
 
     // 合并参数
     for(var i in defaults) defaults.hasOwnProperty(i) && !configs.hasOwnProperty(i) && (configs[i] = defaults[i]);
     this.configs = configs;
     this.create();
-
     return this;
   };
 
@@ -75,11 +72,11 @@
   // 创建桌面通知
   deskNotification.prototype.create = function() {
 
-    var configs = this.configs,
-        notification = this.notification;
+    var configs = this.configs;
 
     if (this.isPermission()) {
       this.createNoty();
+      var notification = this.notification; // 这里要重新获取一下生成的notification
       notification.onshow = configs.show;
       notification.onclick = configs.click;
       notification.onclose = configs.close;
@@ -114,9 +111,10 @@
     console.log(e);
   };
 
-  var notify = new deskNotification();
+
 
   var entry = function() {
+    var notify = new deskNotification();
     return notify.init.apply(notify, arguments);
   };
   

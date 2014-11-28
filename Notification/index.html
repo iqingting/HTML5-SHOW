@@ -27,7 +27,7 @@
     <button id="notifyBtn2" class="btn btn-blue">消息通知参数展示</button>
   </p>
 
-  <script src="http://requirejs.org/docs/release/2.1.15/comments/require.js"></script>
+  <script src="notification.js"></script>
   <script type="text/javascript">
     
     var notifyBtn1 = document.getElementById('notifyBtn1'),
@@ -40,19 +40,19 @@
     function showNotify1() {
       var data = {
         title: '下机提醒',
-        body: '您的余额不足，请充值'
+        body: '您的余额不足，请充值',
+        tag: '1'
       };
 
-      require(['notification'], function(notify) {
-        var d = notify(data);
-        console.log(d.isSupport());
-      });
+      var d = notify(data);
+      console.log(d.isSupport());
     }
     
     function showNotify2() {
       var data = {
-        title: '下机再次提醒',
+        title: '点击此提醒跳转到百度首页',
         body: '您的余额不足，请再次充值',
+        tag: '2',
         show: function() {
           console.log('the notification is showing');
         },
@@ -65,11 +65,9 @@
         nosupport: function() { alert('fuck ie, don\'t ask me why use this alert!') }
       };
 
-      require(['notification'], function(notify) {
-        var d = notify(data);
-      });
+      var d = notify(data);
     }
-    
+
   </script>
 </body>
 </html>
