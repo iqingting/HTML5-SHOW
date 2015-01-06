@@ -11,7 +11,7 @@
  * congis.show   {Function}      消息通知展示时的函数，默认不做什么响应
  * config.click {Function}      点击弹出的消息通知后执行的函数
  * config.close {Function}      关闭消息通知后执行的函数
- * config.timeout {Number}      是否自动关闭，以及自动关闭的时间间隔(s)        
+ * config.timeout {Number}      是否自动关闭，以及自动关闭的时间间隔(s)
  */
 
 (function(win, doc, undefined) {
@@ -117,7 +117,7 @@
 
   deskNotification.prototype.close = function() {
     this.notification.close();
-  }
+  };
 
   // error
   deskNotification.prototype.error = function(e) {

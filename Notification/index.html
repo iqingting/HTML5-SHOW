@@ -36,7 +36,6 @@
     notifyBtn1.addEventListener('click', showNotify1, false);
     notifyBtn2.addEventListener('click', showNotify2, false);
 
-
     function showNotify1() {
       var data = {
         title: '下机提醒',
@@ -44,9 +43,7 @@
         tag: '1',
         timeout: 2
       };
-
       var d = notify(data);
-      console.log(d.isSupport());
     }
     
     function showNotify2() {
