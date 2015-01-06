@@ -11,7 +11,9 @@
  * congis.show   {Function}      消息通知展示时的函数，默认不做什么响应
  * configs.click {Function}      点击弹出的消息通知后执行的函数
  * configs.close {Function}      关闭消息通知后执行的函数
+ * configs.timeout {Number}      是否自动关闭，以及自动关闭的时间间隔(s)        
  */
+
 (function(win, doc, undefined) {
 
   'use strict';
@@ -30,13 +32,13 @@
 
     this.notification = win.Notification || win.webkitNotification; // webkitNotificition is for chrome 26- and Android 4.4+
 
-  };  
+  };
   
   deskNotification.prototype.init = function(configs) {
 
     configs = configs || {};
 
-    if (this.notification === undefined) {
+    if (!this.notification) {
       configs.nosupport && configs.nosupport();
       return this;
     }
@@ -45,8 +47,10 @@
 
     // 合并参数
     for(var i in defaults) defaults.hasOwnProperty(i) && !configs.hasOwnProperty(i) && (configs[i] = defaults[i]);
+
     this.configs = configs;
     this.create();
+
     return this;
   };
 
@@ -76,6 +80,7 @@
 
     if (this.isPermission()) {
       this.createNoty();
+
       var notification = this.notification; // 这里要重新获取一下生成的notification
       notification.onshow = configs.show;
       notification.onclick = configs.click;
@@ -104,7 +109,15 @@
         configs.body
       )
     }
+    
+    if (configs.timeout) {
+      setTimeout(this.close.bind(this), configs.timeout * 1000);
+    }
   };
+
+  deskNotification.prototype.close = function() {
+    this.notification.close();
+  }
 
   // error
   deskNotification.prototype.error = function(e) {
